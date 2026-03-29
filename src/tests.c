@@ -7,6 +7,7 @@
 #include "process.h"
 #include "input.h"
 #include "generator.h"
+#include "simulator.h"
 
 /* ===================== TEST HELPERS ===================== */
 
@@ -135,4 +136,28 @@ void test_file_input() {
     } else {
         printf("File input test skipped (file not found)\n");
     }
+}
+
+void test_simulator(){
+    ProcessManager pm;
+    init_process_manager(&pm, 10);
+
+    srand(time(NULL));
+    generate_workload(&pm, 5, WORKLOAD_MIXED);
+
+    SchedulerConfig sched = {
+        .type = ROUND_ROBIN_SCHEDULING,
+        .quantum = 2
+    };
+
+    set_scheduling_algorithm(sched);
+
+    SimulationConfig sim = {
+        .context_switch_time = 1
+    };
+
+    run_simulation(&pm, sim);
+
+    free_process_manager(&pm);
+    return 0;
 }

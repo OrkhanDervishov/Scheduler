@@ -6,7 +6,7 @@
 
 typedef enum{
     MLQ_SCHEDULING = 0,
-    ROUND_ROBUN__SCHEDULING,
+    ROUND_ROBIN_SCHEDULING,
     PRIORITY_SCHEDULING,
     SJF_SCHEDULING,
     FCFS_SCHEDULING
@@ -16,6 +16,8 @@ typedef struct {
     Scheduling type;
     int quantum;
 } SchedulerConfig;
+
+extern SchedulerConfig current_config;
 
 /* Core API */
 void set_scheduling_algorithm(SchedulerConfig config);

@@ -4,7 +4,7 @@
 
 /* ===================== GLOBAL CONFIG ===================== */
 
-static SchedulerConfig current_config;
+SchedulerConfig current_config;
 
 /* ===================== UTILS ===================== */
 
@@ -56,7 +56,7 @@ void schedule(ProcessManager* pm)
 {
     switch (current_config.type) {
 
-        case ROUND_ROBUN__SCHEDULING:
+        case ROUND_ROBIN_SCHEDULING:
             round_robin(pm, current_config.quantum);
             break;
 

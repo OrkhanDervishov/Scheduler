@@ -6,6 +6,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <time.h>
+#include "common.h"
 
 typedef enum{
     PROCESS_NEW = 0,
@@ -19,6 +20,7 @@ typedef int pid_t;
 
 #define MAX_PROCESS_NAME_LENGTH 32
 typedef struct{
+    bool empty;
     char name[MAX_PROCESS_NAME_LENGTH];
     pid_t pid;
     clock_t arrival_time;
@@ -32,8 +34,9 @@ typedef struct{
 } Process;
 
 typedef struct{
-    uint32_t process_count;
-    uint32_t capacity;
+    
+    size_t process_count;
+    size_t capacity;
     Process* processes;
 } ProcessManager;
 
@@ -42,6 +45,7 @@ typedef struct{
 static inline Process create_process(pid_t pid, const char* name, clock_t arrival, clock_t burst, uint8_t priority)
 {
     Process p = {
+        .empty = false,
         .pid = pid,
         .arrival_time = arrival,
         .burst_time = burst,

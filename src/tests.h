@@ -10,5 +10,6 @@ void test_generator_cpu_bound();
 void test_generator_interactive();
 void test_generator_priority_heavy();
 void test_file_input();
+void test_simulator();
 
 #endif
