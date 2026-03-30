@@ -42,11 +42,11 @@ typedef struct{
 
 
 
-static inline Process create_process(pid_t pid, const char* name, clock_t arrival, clock_t burst, uint8_t priority)
+static inline Process create_process(const char* name, clock_t arrival, clock_t burst, uint8_t priority)
 {
     Process p = {
         .empty = false,
-        .pid = pid,
+        .pid = 0,
         .arrival_time = arrival,
         .burst_time = burst,
         .remaining_time = burst,

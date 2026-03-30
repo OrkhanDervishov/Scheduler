@@ -13,6 +13,10 @@ void init_process_manager(ProcessManager* pm, uint32_t max_capacity)
         printf("Memory allocation failed!\n");
         exit(EXIT_FAILURE);
     }
+
+    for(int i = 0; i < pm->capacity; i++){
+        pm->processes[i].empty = true;
+    }
 }
 
 int resize_process_manager(ProcessManager* pm, uint32_t new_capacity){
@@ -62,7 +66,7 @@ int add_process(ProcessManager* pm, Process p)
         }
     }
     
-    return 0;
+    return -3;
 }
 
 int delete_process_by_pid(ProcessManager* pm, pid_t pid)
@@ -71,6 +75,7 @@ int delete_process_by_pid(ProcessManager* pm, pid_t pid)
 
     if(!pm->processes[pid].empty){
         pm->processes[pid].empty = true;
+        pm->process_count--;
         return 0;
     }
 

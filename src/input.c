@@ -27,7 +27,7 @@ void input_processes_manual(ProcessManager* pm, int count)
         printf("Priority: ");
         scanf("%d", &pr);
 
-        Process p = create_process(i + 1, name, at, bt, pr);
+        Process p = create_process(name, at, bt, pr);
         add_process(pm, p);
     }
 }
@@ -62,7 +62,7 @@ int input_processes_from_file(ProcessManager* pm, const char* filename)
             return -1;
         }
 
-        Process p = create_process(i + 1, "", at, bt, pr);
+        Process p = create_process("", at, bt, pr);
         add_process(pm, p);
     }
 

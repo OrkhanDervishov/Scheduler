@@ -3,7 +3,7 @@ FLAGS = #-Wall -Wextra
 
 
 
-main: src/main.c src/scheduler.c src/input.c src/process.c src/generator.c src/tests.c src/simulator.c
+main: src/main.c src/scheduler.c src/input.c src/process.c src/generator.c src/tests.c src/simulator.c src/ready_queue.c
 	$(C_COMPILER) $(FLAGS) -o $@ $^
 
 run: main

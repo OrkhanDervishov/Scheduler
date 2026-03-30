@@ -33,7 +33,6 @@ void generate_cpu_bound(ProcessManager* pm, int count)
 {
     for (int i = 0; i < count; i++) {
         Process p = create_process(
-            i + 1,
             "generated",
             rand_range(0, 5),          // arrival
             rand_range(20, 50),        // long burst
@@ -50,7 +49,6 @@ void generate_interactive(ProcessManager* pm, int count)
 {
     for (int i = 0; i < count; i++) {
         Process p = create_process(
-            i + 1,
             "generated",
             rand_range(0, 10),         // more spread arrivals
             rand_range(1, 5),          // short burst
@@ -71,7 +69,6 @@ void generate_mixed(ProcessManager* pm, int count)
                     : rand_range(20, 40);  // long
 
         Process p = create_process(
-            i + 1,
             "generated",
             rand_range(0, 10),
             burst,
@@ -93,7 +90,6 @@ void generate_priority_heavy(ProcessManager* pm, int count)
                            : rand_range(1, 2); // few high priority
 
         Process p = create_process(
-            i + 1,
             "generated",
             rand_range(0, 10),
             rand_range(5, 20),

@@ -3,9 +3,9 @@
 
 #include "process.h"
 
-typedef struct{
+typedef struct QueueNode{
     Process* process;
-    QueueNode *next;
+    struct QueueNode *next;
 } QueueNode;
 
 typedef struct{
