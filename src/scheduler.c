@@ -2,11 +2,7 @@
 #include <stdlib.h>
 #include "scheduler.h"
 
-/* ===================== GLOBAL CONFIG ===================== */
-
 SchedulerConfig current_config;
-
-/* ===================== UTILS ===================== */
 
 void calculate_times(ProcessManager* pm)
 {
@@ -43,8 +39,6 @@ void print_results(ProcessManager* pm)
     printf("\nAverage Turnaround Time: %.2f\n", total_tat / pm->process_count);
 }
 
-/* ===================== CONFIG ===================== */
-
 void set_scheduling_algorithm(SchedulerConfig config)
 {
     current_config = config;
@@ -52,164 +46,192 @@ void set_scheduling_algorithm(SchedulerConfig config)
 
 /* ===================== SCHEDULER DISPATCH ===================== */
 
-void schedule(ProcessManager* pm)
-{
+void schedule(ReadyQueue *rq){
+
     switch (current_config.type) {
-
         case ROUND_ROBIN_SCHEDULING:
-            round_robin(pm, current_config.quantum);
+            round_robin_scheduling(rq);
             break;
-
         case PRIORITY_SCHEDULING:
-            priority_scheduling(pm);
+            priority_scheduling(rq);
             break;
-
         case MLQ_SCHEDULING:
-            multilevel_queue(pm);
+            mlq_scheduling(rq);
             break;
-
         case FCFS_SCHEDULING:
+            fcfs_scheduling(rq);
+            break;
         case SJF_SCHEDULING:
-        default:
-            printf("Scheduling type not fully implemented yet.\n");
+            sjf_scheduling(rq);
             break;
     }
 }
 
-/* ===================== ROUND ROBIN ===================== */
+// ==========================================
+// Round Robin
 
-void round_robin(ProcessManager* pm, int quantum)
+Process* round_robin_scheduling(ReadyQueue* rq)
 {
-    int time = 0;
-    int completed = 0;
+    if (is_empty(rq)) return NULL;
 
-    /* Initialize remaining times */
-    for (int i = 0; i < pm->process_count; i++) {
-        pm->processes[i].remaining_time = pm->processes[i].burst_time;
+    Process* p = dequeue(rq);
+
+    int quantum = current_config.quantum;
+
+    /* Execute for one quantum */
+    int exec_time = (p->remaining_time > quantum)
+                    ? quantum
+                    : p->remaining_time;
+
+    p->remaining_time -= exec_time;
+
+    /* If finished */
+    if (p->remaining_time == 0) {
+        return p;  // done
     }
 
-    while (completed < pm->process_count) {
+    /* Not finished → requeue */
+    enqueue(rq, p);
 
-        int progress = 0;
-
-        for (int i = 0; i < pm->process_count; i++) {
-
-            Process* p = &pm->processes[i];
-
-            if (p->remaining_time > 0) {
-                progress = 1;
-
-                if (p->remaining_time > quantum) {
-                    time += quantum;
-                    p->remaining_time -= quantum;
-                } else {
-                    time += p->remaining_time;
-                    p->remaining_time = 0;
-                    p->completion_time = time;
-                    completed++;
-                }
-            }
-        }
-
-        if (!progress) break;
-    }
-
-    calculate_times(pm);
-    print_results(pm);
+    return NULL;  // not finished yet
 }
 
-/* ===================== PRIORITY SCHEDULING ===================== */
+// ==========================================
+// Priority scheduling
 
-void priority_scheduling(ProcessManager* pm)
+Process* sjf_scheduling(ReadyQueue* rq)
 {
-    int time = 0;
-    int completed = 0;
+    if (is_empty(rq)) return NULL;
 
-    int visited[MAX_PROCESSES] = {0};
+    QueueNode *curr = rq->head, *prev = NULL;
+    QueueNode *best = curr, *best_prev = NULL;
 
-    while (completed < pm->process_count) {
+    clock_t min_burst = curr->process->burst_time;
 
-        int idx = -1;
-        int best_priority = 9999;
-
-        for (int i = 0; i < pm->process_count; i++) {
-
-            Process* p = &pm->processes[i];
-
-            if (!visited[i] && p->arrival_time <= time) {
-
-                if (p->priority < best_priority) {
-                    best_priority = p->priority;
-                    idx = i;
-                }
-            }
+    while (curr) {
+        if (curr->process->burst_time < min_burst) {
+            min_burst = curr->process->burst_time;
+            best = curr;
+            best_prev = prev;
         }
 
-        if (idx != -1) {
-            Process* p = &pm->processes[idx];
-
-            time += p->burst_time;
-            p->completion_time = time;
-
-            visited[idx] = 1;
-            completed++;
-        } else {
-            time++;
-        }
+        prev = curr;
+        curr = curr->next;
     }
 
-    calculate_times(pm);
-    print_results(pm);
+    /* remove best */
+    if (best_prev == NULL)
+        rq->head = best->next;
+    else
+        best_prev->next = best->next;
+
+    if (best == rq->tail)
+        rq->tail = best_prev;
+
+    Process* p = best->process;
+    free(best);
+    rq->size--;
+
+    return p;
 }
 
-/* ===================== MULTILEVEL QUEUE ===================== */
 
-void multilevel_queue(ProcessManager* pm)
+Process* srtf_scheduling(ReadyQueue* rq, Process* current)
 {
-    int time = 0;
-    int quantum = 2;
+    Process* best = current;
 
-    /* Reset remaining times */
-    for (int i = 0; i < pm->process_count; i++) {
-        pm->processes[i].remaining_time = pm->processes[i].burst_time;
-    }
+    QueueNode* curr = rq->head;
 
-    /* High priority queue (RR-like) */
-    for (int i = 0; i < pm->process_count; i++) {
-
-        Process* p = &pm->processes[i];
-
-        if (p->priority <= 2) {
-
-            int rem = p->remaining_time;
-
-            while (rem > 0) {
-                if (rem > quantum) {
-                    time += quantum;
-                    rem -= quantum;
-                } else {
-                    time += rem;
-                    rem = 0;
-                    p->completion_time = time;
-                }
-            }
-
-            p->remaining_time = 0;
+    while (curr) {
+        if (!best || curr->process->remaining_time < best->remaining_time) {
+            best = curr->process;
         }
+        curr = curr->next;
     }
 
-    /* Low priority queue (FCFS-like) */
-    for (int i = 0; i < pm->process_count; i++) {
+    return best;
+}
 
-        Process* p = &pm->processes[i];
+Process* priority_scheduling(ReadyQueue* rq)
+{
+    if (is_empty(rq)) return NULL;
 
-        if (p->priority > 2) {
-            time += p->burst_time;
-            p->completion_time = time;
-            p->remaining_time = 0;
+    QueueNode *curr = rq->head, *prev = NULL;
+    QueueNode *best = curr, *best_prev = NULL;
+
+    int best_priority = curr->process->priority;
+
+    while (curr) {
+        if (curr->process->priority < best_priority) {
+            best_priority = curr->process->priority;
+            best = curr;
+            best_prev = prev;
         }
+
+        prev = curr;
+        curr = curr->next;
     }
 
-    calculate_times(pm);
-    print_results(pm);
+    /* remove best */
+    if (best_prev == NULL)
+        rq->head = best->next;
+    else
+        best_prev->next = best->next;
+
+    if (best == rq->tail)
+        rq->tail = best_prev;
+
+    Process* p = best->process;
+    free(best);
+    rq->size--;
+
+    return p;
+}
+
+Process* mlq_scheduling(ReadyQueue* rq)
+{
+    if (is_empty(rq)) return NULL;
+
+    QueueNode *curr = rq->head, *prev = NULL;
+
+    QueueNode *high = NULL, *high_prev = NULL;
+
+    /* find high-priority process first */
+    while (curr) {
+        if (curr->process->priority <= 2) {
+            high = curr;
+            high_prev = prev;
+            break;
+        }
+        prev = curr;
+        curr = curr->next;
+    }
+
+    QueueNode *target = high ? high : rq->head;
+    QueueNode *target_prev = high ? high_prev : NULL;
+
+    /* remove */
+    if (target_prev == NULL)
+        rq->head = target->next;
+    else
+        target_prev->next = target->next;
+
+    if (target == rq->tail)
+        rq->tail = target_prev;
+
+    Process* p = target->process;
+    free(target);
+    rq->size--;
+
+    return p;
+}
+
+Process* fcfs_scheduling(ReadyQueue* rq)
+{
+    if (is_empty(rq)) return NULL;
+
+    /* Simply take the first process in queue */
+    Process* p = dequeue(rq);
+
+    return p;
 }

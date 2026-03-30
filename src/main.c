@@ -12,10 +12,10 @@ int main() {
     test_generator_interactive();
     test_generator_priority_heavy();
     test_file_input();
-    // test_simulator();
+    test_simulator();
     
 
-    printf("\nAll tests completed successfully ✅\n");
+    printf("\nAll tests completed successfully\n");
 
     return 0;
 }

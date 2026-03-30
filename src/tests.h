@@ -1,7 +1,6 @@
 #ifndef TESTS_H
 #define TESTS_H
 
-/* ===================== TEST HELPERS ===================== */
 
 void test_process_creation();
 void test_process_manager_add_delete();

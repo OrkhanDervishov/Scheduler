@@ -5,7 +5,6 @@
 #include "ready_queue.h"
 #include "scheduler.h"
 
-/* ===================== SIMULATION ===================== */
 
 void run_simulation(ProcessManager* pm, SimulationConfig config)
 {
@@ -22,7 +21,7 @@ void run_simulation(ProcessManager* pm, SimulationConfig config)
 
     while (completed < pm->process_count) {
 
-        /* ===================== ARRIVALS ===================== */
+        // Arrivals
         for (int i = 0; i < pm->process_count; i++) {
             Process* p = &pm->processes[i];
 
@@ -32,7 +31,7 @@ void run_simulation(ProcessManager* pm, SimulationConfig config)
             }
         }
 
-        /* ===================== DISPATCH ===================== */
+        // Dispatch
         if (current == NULL && !is_empty(&rq)) {
             current = dequeue(&rq);
 
@@ -43,7 +42,7 @@ void run_simulation(ProcessManager* pm, SimulationConfig config)
             time += config.context_switch_time;
         }
 
-        /* ===================== EXECUTION ===================== */
+        // Executions
         if (current != NULL) {
 
             printf("Time %d: Running P%d\n", time, current->pid);
@@ -70,7 +69,7 @@ void run_simulation(ProcessManager* pm, SimulationConfig config)
             }
         }
         else {
-            /* ===================== IDLE HANDLING ===================== */
+            // Idle handling
 
             int next_arrival = INT_MAX;
 
@@ -82,7 +81,7 @@ void run_simulation(ProcessManager* pm, SimulationConfig config)
             }
 
             if (next_arrival == INT_MAX) {
-                break; /* nothing left */
+                break;
             }
 
             printf("Time %d → %d: CPU Idle\n", time, next_arrival);

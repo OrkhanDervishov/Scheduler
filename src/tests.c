@@ -9,7 +9,6 @@
 #include "generator.h"
 #include "simulator.h"
 
-/* ===================== TEST HELPERS ===================== */
 
 void test_process_creation() {
 
@@ -48,7 +47,6 @@ void test_process_manager_add_delete() {
 
 void test_input_manual_simulation() {
 
-    // Simulate manual input by directly creating processes
     ProcessManager pm;
     init_process_manager(&pm, 10);
 

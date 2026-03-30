@@ -1,6 +1,7 @@
 #ifndef SCHEDULER_H
 #define SCHEDULER_H
 #include "process.h"
+#include "ready_queue.h"
 
 #define MAX_PROCESSES 100
 
@@ -21,12 +22,14 @@ extern SchedulerConfig current_config;
 
 /* Core API */
 void set_scheduling_algorithm(SchedulerConfig config);
-void schedule(ProcessManager* pm);
+void schedule(ReadyQueue *rq);
 
-/* Algorithms */
-void round_robin(ProcessManager* pm, int quantum);
-void priority_scheduling(ProcessManager* pm);
-void multilevel_queue(ProcessManager* pm);
+// Algorithms
+Process* round_robin_scheduling(ReadyQueue* rq);
+Process* sjf_scheduling(ReadyQueue* rq);
+Process* priority_scheduling(ReadyQueue* rq);
+Process* mlq_scheduling(ReadyQueue* rq);
+Process* fcfs_scheduling(ReadyQueue* rq);
 
 /* Utilities */
 void calculate_times(ProcessManager* pm);
