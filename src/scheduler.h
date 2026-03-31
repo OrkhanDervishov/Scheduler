@@ -2,6 +2,7 @@
 #define SCHEDULER_H
 #include "process.h"
 #include "ready_queue.h"
+#include "metrics.h"
 
 #define MAX_PROCESSES 100
 

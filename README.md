@@ -10,7 +10,7 @@ make run
 
 Or
 ```
-gcc -o main src/main.c src/scheduler.c src/input.c src/process.c src/generator.c src/tests.c src/simulator.c src/ready_queue.c
+gcc -o main src/main.c src/scheduler.c src/input.c src/process.c src/generator.c src/tests.c src/simulator.c src/ready_queue.c src/metrics.c src/output.c
 
 ./main
 ```

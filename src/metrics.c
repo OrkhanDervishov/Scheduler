@@ -10,9 +10,9 @@ void metrics_calculate_process_times(ProcessManager* pm)
 
         p->turnaround_time = p->completion_time - p->arrival_time;
         p->waiting_time = p->turnaround_time - p->burst_time;
-        p->response_time = (p->first_run_time == UNINITIALIZED_TIME)
-            ? UNINITIALIZED_TIME
-            : (p->first_run_time - p->arrival_time);
+        // p->response_time = (p->first_run_time == UNINITIALIZED_TIME)
+        //     ? UNINITIALIZED_TIME
+        //     : (p->first_run_time - p->arrival_time);
     }
 }
 
@@ -111,5 +111,5 @@ void metrics_calculate_summary(const ProcessManager* pm, MetricsSummary* summary
     summary->cpu_utilization = (summary->makespan > 0) ? ((total_bt / summary->makespan) * 100.0) : 0.0;
     summary->fairness_dispersion = sq_diff_sum / pm->process_count;
     summary->starvation_count = starvation;
-    summary->context_switches = pm->context_switches;
+    summary->context_switches = 0;
 }

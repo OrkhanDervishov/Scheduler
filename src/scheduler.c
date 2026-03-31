@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "scheduler.h"
+#include "metrics.h"
+#include "output.h"
+
 
 SchedulerConfig current_config;
 

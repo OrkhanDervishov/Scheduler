@@ -43,7 +43,6 @@ void input_processes(ProcessManager* pm)
         input_file(pm);
         break;
     case 2:
-        // generate_workload(pm, 3, WORKLOAD_MIXED);
         work_gen(pm);
         break;
     }
@@ -145,7 +144,6 @@ void run_scheduler(ProcessManager* pm)
 
     set_scheduling_algorithm(config);
 
-    /* Run simulation */
     SimulationConfig sim = {
         .context_switch_time = 0
     };
