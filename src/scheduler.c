@@ -6,37 +6,12 @@ SchedulerConfig current_config;
 
 void calculate_times(ProcessManager* pm)
 {
-    for (int i = 0; i < pm->process_count; i++) {
-        Process* p = &pm->processes[i];
-
-        p->turnaround_time = p->completion_time - p->arrival_time;
-        p->waiting_time = p->turnaround_time - p->burst_time;
-    }
+    metrics_calculate_process_times(pm);
 }
 
 void print_results(ProcessManager* pm)
 {
-    float total_wt = 0, total_tat = 0;
-
-    printf("\nPID\tAT\tBT\tCT\tWT\tTAT\n");
-
-    for (int i = 0; i < pm->process_count; i++) {
-        Process* p = &pm->processes[i];
-
-        printf("%d\t%d\t%d\t%d\t%d\t%d\n",
-               p->pid,
-               (int)p->arrival_time,
-               (int)p->burst_time,
-               (int)p->completion_time,
-               p->waiting_time,
-               p->turnaround_time);
-
-        total_wt += p->waiting_time;
-        total_tat += p->turnaround_time;
-    }
-
-    printf("\nAverage Waiting Time: %.2f", total_wt / pm->process_count);
-    printf("\nAverage Turnaround Time: %.2f\n", total_tat / pm->process_count);
+    output_print_results(pm, current_config);
 }
 
 void set_scheduling_algorithm(SchedulerConfig config)
