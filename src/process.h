@@ -8,6 +8,8 @@
 #include <time.h>
 #include "common.h"
 
+#define UNINITIALIZED_TIME 0
+
 typedef enum{
     PROCESS_NEW = 0,
     PROCESS_READY,
@@ -29,6 +31,8 @@ typedef struct{
     clock_t completion_time;
     clock_t turnaround_time;
     clock_t waiting_time;
+    clock_t response_time;
+    clock_t first_run_time;
     uint8_t priority;
     ProcessState state;
 } Process;
@@ -53,6 +57,8 @@ static inline Process create_process(const char* name, clock_t arrival, clock_t 
         .completion_time = 0,
         .turnaround_time = 0,
         .waiting_time = 0,
+        .response_time   = 0,
+        .first_run_time  = 0,
         .priority = priority,
         .state = PROCESS_NEW
     };

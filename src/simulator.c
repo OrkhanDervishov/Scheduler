@@ -38,7 +38,7 @@ void run_simulation(ProcessManager* pm, SimulationConfig config)
             current->state = PROCESS_RUNNING;
             quantum_counter = 0;
 
-            /* Context switch overhead */
+            // Context switch overhead
             time += config.context_switch_time;
         }
 
@@ -50,7 +50,7 @@ void run_simulation(ProcessManager* pm, SimulationConfig config)
             current->remaining_time--;
             quantum_counter++;
 
-            /* FINISH */
+            // FINISH
             if (current->remaining_time == 0) {
                 current->completion_time = time + 1;
                 current->state = PROCESS_TERMINATED;
@@ -58,7 +58,7 @@ void run_simulation(ProcessManager* pm, SimulationConfig config)
                 current = NULL;
                 completed++;
             }
-            /* ROUND ROBIN PREEMPTION */
+            // ROUND ROBIN PREEMPTION
             else if (current_config.type == ROUND_ROBIN_SCHEDULING &&
                      quantum_counter >= current_config.quantum) {
 
